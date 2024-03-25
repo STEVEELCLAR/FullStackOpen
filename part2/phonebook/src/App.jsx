@@ -10,13 +10,8 @@ const App = () => {
 
   const addNote = (event) => {
     event.preventDefault()
-
-    const nameObject = {
-      name: newName
-    }
+    console.log
   
-    setPersons([...persons, nameObject]);
-    setNewName('')
 
   }
 
@@ -37,7 +32,7 @@ const App = () => {
       </form>
       <h2>Numbers</h2>
       <div>
-      {Array.isArray(persons) && persons.map((person, index) => (
+      {persons.map((person, index) => (
           <div key={index}>
             <DisplayName name={person.name} />
           </div>
