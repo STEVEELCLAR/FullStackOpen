@@ -1,6 +1,25 @@
 import { useState } from 'react'
 
-const DisplayName = ({name, number}) => <p> {name} {number} </p>
+const Persons = ({name, number}) => <div> {name} {number} </div>
+
+const Filter = ({searchName, eventHandler}) => <div>filter shown with <input value = {searchName} onChange={eventHandler}/></div>
+
+const PersonForm = ({addNote, newName, eventNameHandler, newNumber, eventNumberHandler}) => {
+  return (
+    <form onSubmit={addNote} >
+        <div>
+          name: <input value = {newName} onChange={eventNameHandler}/>
+        </div>
+        <div>
+          number: <input value = {newNumber} onChange={eventNumberHandler}/>
+        </div>
+        <div>
+          <button type="submit">add</button>
+        </div>
+      </form>
+  )
+}
+
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -56,26 +75,17 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input value = {searchName} onChange={handleSearchNameChange}/>
-      </div>
+      <Filter searchName = {searchName} eventHandler = {handleSearchNameChange} /> 
       <h2>add a new</h2>
-      <form onSubmit={addNote} >
-        <div>
-          name: <input value = {newName} onChange={handleNameChange}/>
-        </div>
-        <div>
-          number: <input value = {newNumber} onChange={handleNumberChange}/>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm 
+          addNote = {addNote} newName = {newName} eventNameHandler = {handleNameChange}
+          newNumber = {newNumber} eventNumberHandler = {handleNumberChange}
+      />     
       <h2>Numbers</h2>
       <div>
       {filteredPersons.map((person, index) => (
           <div key={index}>
-            <DisplayName name={person.name} number = {person.number}/>
+            <Persons name={person.name} number = {person.number}/>
           </div>
         ))}
     </div>
