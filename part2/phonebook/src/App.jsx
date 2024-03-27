@@ -49,28 +49,38 @@ const App = () => {
 
   const addNote = (event) => {
     event.preventDefault()
-    console.log
-  
-    if (persons.find((person) => person.name === newName )){
-      alert(`${newName} is already added to phonebook`)
+    
+    const nameObject = {
+      name: newName,
+      number: newNumber,
+      id: `${persons.length + 1}`,
+    }
+    
+    const person = persons.find((person) => person.name === newName)
+
+    if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new`)){
+      personsService
+        .update(person.id, nameObject).then(returnedPerson => {
+          setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
+        })
+      
+     }
+    
+    if(person)
+     {
       setNewName('')
       setNewNumber('')
      }
     
     else{
-      const nameObject = {
-        name: newName,
-        number: newNumber,
-        id: `${persons.length + 1}`,
-      }
 
       personsService
-      .create(nameObject)
-      .then(response => {
-        setPersons(persons.concat(response.data))
-        setNewName('')
-        setNewNumber('')
-      })
+        .create(nameObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNumber('')
+        })
     }
   }
 
