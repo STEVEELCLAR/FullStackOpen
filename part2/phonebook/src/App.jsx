@@ -2,7 +2,14 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personsService from './services/persons'
 
-const Persons = ({name, number}) => <div> {name} {number} </div>
+const Persons = ({name, number, remove}) => {
+  return(
+    <div> 
+      {name} {number} 
+      <button onClick={remove}>delete</button>
+    </div>
+  )
+}
 
 const Filter = ({searchName, eventHandler}) => <div>filter shown with <input value = {searchName} onChange={eventHandler}/></div>
 
@@ -54,7 +61,7 @@ const App = () => {
       const nameObject = {
         name: newName,
         number: newNumber,
-        id: persons.length +1,
+        id: `${persons.length + 1}`,
       }
 
       personsService
@@ -82,6 +89,20 @@ const App = () => {
     person.name.toLowerCase().includes(searchName.toLowerCase())
   );
 
+  const remove = id => {
+    const person = persons.find((person) => person.id === id)
+    if(window.confirm(`Delete ${person.name}`)){
+      personsService
+        .remove(`http://localhost:3001/persons/${id}`)
+        .then(() => {
+          return personsService.getAll()
+        })
+        .then(updatedResponse => {
+          setPersons(updatedResponse.data)
+      })
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -95,7 +116,11 @@ const App = () => {
       <div>
       {filteredPersons.map((person, index) => (
           <div key={index}>
-            <Persons name={person.name} number = {person.number}/>
+            <Persons 
+              name={person.name} 
+              number = {person.number}
+              remove = {()=> remove(person.id)}
+            />
           </div>
         ))}
     </div>
