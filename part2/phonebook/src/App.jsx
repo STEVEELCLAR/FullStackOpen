@@ -30,13 +30,13 @@ const PersonForm = ({addNote, newName, eventNameHandler, newNumber, eventNumberH
   )
 }
 
-const Notification = ({ message }) => {
+const Notification = ({ message, design }) => {
   if (message === null) {
     return null
   }
 
   return (
-    <div className='error'>
+    <div className={design}>
       {message}
     </div>
   )
@@ -49,6 +49,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searchName, setSearchName] = useState('');
+  const [notifMessage, setNotifMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
@@ -78,14 +79,20 @@ const App = () => {
         personsService
           .update(person.id, nameObject).then(returnedPerson => {
             setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
+            setNewName('')
+            setNewNumber('')
+            setNotifMessage(`Updated ${person.name} number`)
+            setErrorMessage('')
           })
-        setNewName('')
-        setNewNumber('')
-        setErrorMessage(`Updated ${person.name} number`)
+          .catch(error => {
+            setNotifMessage('')
+            setErrorMessage(`Information of '${person.name}' has already been removed from server`)
+          })
        }
        else{
         setNewName('')
         setNewNumber('')
+        setNotifMessage('')
        }
      }
     
@@ -96,9 +103,10 @@ const App = () => {
         .then(response => {
           setPersons(persons.concat(response.data))
         })
-      setErrorMessage(`Added ${newName}`)
+      setNotifMessage(`Added ${newName}`)
       setNewName('')
       setNewNumber('')
+      setErrorMessage('')
     }
   }
 
@@ -134,7 +142,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      {errorMessage && <Notification message={errorMessage} />}
+      {notifMessage && <Notification message={notifMessage} design = "notif"/>}
+      {errorMessage && <Notification message = {errorMessage} design = "error" />}
       <Filter searchName = {searchName} eventHandler = {handleSearchNameChange} /> 
       <h2>add a new</h2>
       <PersonForm 
