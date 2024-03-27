@@ -19,6 +19,16 @@
       "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": "4"
+    },
+    {
+      "name": "Steve Clar",
+      "number": "09",
+      "id": "5"
+    },
+    {
+      "id": "6",
+      "name": "Mark Clar",
+      "number": "890"
     }
   ]
 }

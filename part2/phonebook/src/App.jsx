@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personsService from './services/persons'
+import './index.css'
 
 const Persons = ({name, number, remove}) => {
   return(
@@ -29,6 +30,18 @@ const PersonForm = ({addNote, newName, eventNameHandler, newNumber, eventNumberH
   )
 }
 
+const Notification = ({ message }) => {
+  if (message === null) {
+    return null
+  }
+
+  return (
+    <div className='error'>
+      {message}
+    </div>
+  )
+}
+
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -36,6 +49,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [searchName, setSearchName] = useState('');
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     console.log('effect')
@@ -57,19 +71,22 @@ const App = () => {
     }
     
     const person = persons.find((person) => person.name === newName)
-
-    if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new`)){
-      personsService
-        .update(person.id, nameObject).then(returnedPerson => {
-          setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
-        })
-      
-     }
     
     if(person)
      {
-      setNewName('')
-      setNewNumber('')
+      if (window.confirm(`${person.name} is already added to phonebook, replace the old number with a new`)){
+        personsService
+          .update(person.id, nameObject).then(returnedPerson => {
+            setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
+          })
+        setNewName('')
+        setNewNumber('')
+        setErrorMessage(`Updated ${person.name} number`)
+       }
+       else{
+        setNewName('')
+        setNewNumber('')
+       }
      }
     
     else{
@@ -78,9 +95,10 @@ const App = () => {
         .create(nameObject)
         .then(response => {
           setPersons(persons.concat(response.data))
-          setNewName('')
-          setNewNumber('')
         })
+      setErrorMessage(`Added ${newName}`)
+      setNewName('')
+      setNewNumber('')
     }
   }
 
@@ -116,6 +134,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {errorMessage && <Notification message={errorMessage} />}
       <Filter searchName = {searchName} eventHandler = {handleSearchNameChange} /> 
       <h2>add a new</h2>
       <PersonForm 
