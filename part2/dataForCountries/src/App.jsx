@@ -3,17 +3,17 @@ import countriesService from './services/countries'
 
 const SearchCountries = ({searchName, eventHandler}) => <div>fidn countries <input value = {searchName} onChange={eventHandler}/></div>
 
-const Countries = ({name}) => {
+const Countries = ({name, showCountry}) => {
   return(
     <div> 
-      {name} 
+      {name}
+      <button onClick={showCountry}>show</button>
     </div>
   )
 }
 
 const Country = ({name, capital, area, languages, countryFlag}) => {
   const languagesValues = Object.values(languages)
-  console.log(countryFlag.png)
   return(
     <div> 
       <h1>{name}</h1> 
@@ -29,6 +29,7 @@ const Country = ({name, capital, area, languages, countryFlag}) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [searchName, setSearchName] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState()
 
   useEffect(() => {
     console.log('effect')
@@ -47,8 +48,11 @@ const App = () => {
   const filteredCountries = countries.filter(country =>
     country.name.common.toLowerCase().includes(searchName.toLowerCase())
   );
- 
 
+  const showCountry = countryName =>{
+      console.log("the country", {countryName})
+      setSearchName(countryName)
+  }
   return (
     <div>
       <SearchCountries searchName = {searchName} eventHandler = {handleSearchNameChange} /> 
@@ -72,8 +76,7 @@ const App = () => {
           <div key={index}>
             <Countries 
               name={country.name.common} 
-              // number = {person.number}
-              // remove = {()=> remove(person.id)}
+              showCountry ={()=>showCountry(country.name.common)}
             />
             </div>
           ))}
