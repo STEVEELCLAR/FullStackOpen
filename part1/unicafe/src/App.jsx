@@ -32,7 +32,7 @@ const StatisticLine = (props) => {
         <td>{props.text}</td>
         <td>{props.value} %</td>
       </tr>
-)
+    )
   }
   return(
         <tr>
