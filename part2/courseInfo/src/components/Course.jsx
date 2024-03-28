@@ -1,3 +1,4 @@
+
 const Header = ({ course }) => <h2>{course}</h2>
 
 const Total = ({ parts }) => {
