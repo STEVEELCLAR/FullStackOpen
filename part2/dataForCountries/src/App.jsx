@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import countriesService from './services/countries'
+import weatherService from './services/weather'
+import weather from './services/weather'
 
 const SearchCountries = ({searchName, eventHandler}) => <div>fidn countries <input value = {searchName} onChange={eventHandler}/></div>
 
@@ -12,8 +14,11 @@ const Countries = ({name, showCountry}) => {
   )
 }
 
-const Country = ({name, capital, area, languages, countryFlag}) => {
+const Country = ({name, capital, area, languages, countryFlag, temperature}) => {
   const languagesValues = Object.values(languages)
+  // console.log("Temp",temperature.main.temp)
+  const weatherIcon = `https://openweathermap.org/img/wn/${temperature.weather[0].icon}@2x.png`
+  const temperatureReading = ((temperature.main.temp -32) * (5/9)).toFixed(2)
   return(
     <div> 
       <h1>{name}</h1> 
@@ -22,6 +27,10 @@ const Country = ({name, capital, area, languages, countryFlag}) => {
       <h3>Languages:</h3>
       {languagesValues.map((language, index)=> (<li key = {index}>{language}</li>))}
       <img src={countryFlag.png}></img>
+      <h1>Weather in {capital}</h1>
+      <p>temperature {temperatureReading} celcuis</p>
+      <img src={weatherIcon}></img>
+      <p>wind {temperature.wind.speed} m/s</p>
     </div>
   )
 }
@@ -29,7 +38,7 @@ const Country = ({name, capital, area, languages, countryFlag}) => {
 const App = () => {
   const [countries, setCountries] = useState([])
   const [searchName, setSearchName] = useState('');
-  const [selectedCountry, setSelectedCountry] = useState()
+  const [weather, setWeather] = useState([])
 
   useEffect(() => {
     console.log('effect')
@@ -41,17 +50,42 @@ const App = () => {
   }, [])
   console.log('render', countries.length, 'countires')
 
-  const handleSearchNameChange = (event) => {
-    setSearchName(event.target.value)
-  }
-
   const filteredCountries = countries.filter(country =>
     country.name.common.toLowerCase().includes(searchName.toLowerCase())
   );
 
-  const showCountry = countryName =>{
-      console.log("the country", {countryName})
-      setSearchName(countryName)
+  useEffect(() => {
+    console.log("here", searchName)
+    let count = 0
+    if(searchName){
+      if (filteredCountries.length === 1){
+        console.log("countb", count)
+        if (count === 0){
+          console.log("count", count)
+          const country = filteredCountries[0]
+          weatherService
+            .getAll(country.capitalInfo.latlng[0],country.capitalInfo.latlng[1])
+            .then(response => {
+              setWeather(response.data)
+            })
+          console.log("render", weather, "weather")
+          count++;
+        }
+      }
+      else{
+        count = 0
+      }
+    }
+
+  }, [searchName, filteredCountries])
+
+
+  const handleSearchNameChange = (event) => {
+    setSearchName(event.target.value)
+  }
+
+  const showCountry = ({country}) =>{
+    setSearchName(country.name.common)
   }
   return (
     <div>
@@ -66,6 +100,7 @@ const App = () => {
               area={country.area}
               languages = {country.languages}
               countryFlag = {country.flags}
+              temperature = {weather}
             />
             </div>
           ))}
@@ -76,7 +111,7 @@ const App = () => {
           <div key={index}>
             <Countries 
               name={country.name.common} 
-              showCountry ={()=>showCountry(country.name.common)}
+              showCountry ={()=>showCountry({country})}
             />
             </div>
           ))}
