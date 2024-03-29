@@ -1,16 +1,27 @@
 const express = require('express')
 const morgan = require('morgan')
 const app = express()
+const cors = require('cors')
 
+app.use(cors())
 app.use(express.json())
 
 
+// Define custom Morgan token to log request body for POST requests
 morgan.token('req-body', (req, res) => JSON.stringify(req.body));
 
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :req-body', {
-  skip: (req, res) => req.method !== 'POST' 
-}));
+// Create Morgan middleware instance with custom format for POST requests
+const postLogger = morgan(':method :url :status :res[content-length] - :response-time ms :req-body');
 
+// Apply Morgan middleware globally
+app.use((req, res, next) => {
+  // Conditionally use custom format for POST requests, otherwise use 'tiny' format
+  if (req.method === 'POST') {
+    postLogger(req, res, next);
+  } else {
+    morgan('tiny')(req, res, next);
+  }
+});
 let persons = [
     { 
       "id": 1,
