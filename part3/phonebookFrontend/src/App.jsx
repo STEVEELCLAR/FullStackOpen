@@ -128,7 +128,7 @@ const App = () => {
     const person = persons.find((person) => person.id === id)
     if(window.confirm(`Delete ${person.name}`)){
       personsService
-        .remove(`http://localhost:3001/persons/${id}`)
+        .remove(`/api/persons/${id}`)
         .then(() => {
           return personsService.getAll()
         })
