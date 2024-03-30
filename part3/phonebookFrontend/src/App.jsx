@@ -128,7 +128,7 @@ const App = () => {
     const person = persons.find((person) => person.id === id)
     if(window.confirm(`Delete ${person.name}`)){
       personsService
-        .remove(`/api/persons/${id}`)
+        .remove(`${id}`)
         .then(() => {
           return personsService.getAll()
         })
