@@ -31,8 +31,6 @@ if (process.argv.length<3) {
 }
 
 const password = process.argv[2]
-const personName = process.argv[3]
-const personNumber = process.argv[4]
 
 const url =
   `mongodb+srv://fullstack:${password}@cluster0.urucgsa.mongodb.net/Persons?retryWrites=true&w=majority&appName=Cluster0`
@@ -44,53 +42,27 @@ const url =
   const personSchema = new mongoose.Schema({
     name: String,
     number: String,
+    id: String
   })
   
   const Person = mongoose.model('Person', personSchema)
 
 
-let persons = [
-    { 
-      "id": 1,
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": 2,
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": 3,
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": 4,
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    }
-]
-
   app.get('/api/persons', (request, response) => {
-    Persons.find({}).then(persons => {
+    Person.find({}).then(persons => {
       response.json(persons)
     })
   })
-  
-  // app.get('/api/persons', (request, response) => {
-  //   response.json(persons)
+
+  // app.get('/info', (request, response) => {
+  //   const currentTime = new Date().toString()
+
+  //   response.send(`
+  //       <p>Phonebook has infor for ${persons.length} person</p>
+  //       <p>${currentTime}</p>
+  //   `)
+  //   console.log(formattedTime)
   // })
-
-  app.get('/info', (request, response) => {
-    const currentTime = new Date().toString()
-
-    response.send(`
-        <p>Phonebook has infor for ${persons.length} person</p>
-        <p>${currentTime}</p>
-    `)
-    console.log(formattedTime)
-  })
 
   app.get('/api/persons/:id', (request, response) => {
 
@@ -113,28 +85,19 @@ let persons = [
 
   app.post('/api/persons', (request, response) => {
     const body = request.body
-    const personName = persons.find(person => person.name === body.name)
-    if (!body.name || !body.number) {
-      return response.status(400).json({ 
-        error: 'Both name and number are required' 
-      })
-    }    
-    else if (personName) {
-        return response.status(400).json({ 
-          error: 'name must be unique' 
-        })
-      }   
-    
-  
-    const person = {
-      name: body.name,
-      number: body.number,
+     
+    const person = new Person({
+      name: `${body.name}`,
+      number: `${body.number}`,
       id: Math.random(),
-    }
+    })
+      
+    person.save().then(result => {
+      console.log(`Add ${body.name} number ${body.number} to phonebook`)
+      // mongoose.connection.close()
+      response.json(person)
+    })
   
-    persons = persons.concat(person)
-  
-    response.json(person)
   })
 
 
