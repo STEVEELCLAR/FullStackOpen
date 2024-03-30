@@ -5,7 +5,7 @@ const cors = require('cors')
 
 app.use(cors())
 app.use(express.json())
-
+app.use(express.static('dist'))
 
 // Define custom Morgan token to log request body for POST requests
 morgan.token('req-body', (req, res) => JSON.stringify(req.body));
@@ -107,7 +107,7 @@ let persons = [
 
 
 
-  const PORT = 3001
+  const PORT = process.env.PORT || 3001
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
