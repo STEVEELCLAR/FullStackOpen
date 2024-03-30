@@ -9,8 +9,8 @@ const create = newObject => {
   return axios.post(baseUrl, newObject)
 }
 
-const remove = newObject => {
-  return axios.delete(baseUrl+newObject)
+const remove = id => {
+  return axios.delete(baseUrl+"/"+id)
 }
 const update = (id, newObject) => {
   const request = axios.put(`${baseUrl}/${id}`, newObject)

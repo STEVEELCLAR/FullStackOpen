@@ -1,8 +1,8 @@
 GET https://fullstackopen-5gbr.onrender.com/api/persons/
 ####
-GET  http://localhost:3001/api/persons/1
+GET  https://fullstackopen-5gbr.onrender.com/api/persons/1
 ###
-POST http://localhost:3001/api/persons/ HTTP/1.1
+POST https://fullstackopen-5gbr.onrender.com/api/persons/ HTTP/1.1
 content-type: application/json
 
 {
