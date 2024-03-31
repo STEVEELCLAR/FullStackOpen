@@ -62,6 +62,17 @@ app.use((req, res, next) => {
       
   })
 
+
+  app.get('/info', (request, response) => {
+    const currentTime = new Date().toString()
+    console.log("person", Person)
+
+    response.send(`
+        <p>Phonebook has information for ${Person.length-1} person</p>
+        <p>${currentTime}</p>
+    `)
+  })
+
   app.post('/api/persons', (request, response) => {
     const body = request.body
      
