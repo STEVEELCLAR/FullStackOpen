@@ -73,7 +73,7 @@ app.use((req, res, next) => {
     `)
   })
 
-  app.post('/api/persons', (request, response) => {
+  app.post('/api/persons', (request, response, next) => {
     const body = request.body
      
     const person = new Person({
@@ -85,6 +85,7 @@ app.use((req, res, next) => {
       console.log(`Add ${body.name} number ${body.number} to phonebook`)
       response.json(person)
     })
+    .catch(error => next(error))
   
   })
 
@@ -96,7 +97,7 @@ app.use((req, res, next) => {
       number: body.number,
     }
   
-    Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    Person.findByIdAndUpdate(request.params.id, person, { new: true, runValidators: true, context: 'query' })
       .then(updatedPerson => {
         response.json(updatedPerson)
       })
@@ -109,7 +110,10 @@ app.use((req, res, next) => {
   
     if (error.name === 'CastError') {
       return response.status(400).send({ error: 'malformatted id' })
-    } 
+    } else if (error.name === 'ValidationError') {
+      return response.status(400).json({ error: error.message })
+    }
+   
   
     next(error)
   }

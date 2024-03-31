@@ -101,8 +101,14 @@ const App = () => {
         .create(nameObject)
         .then(response => {
           setPersons(persons.concat(response.data))
+          setErrorMessage('')
+          setNotifMessage(`Added ${newName}`)
         })
-      setNotifMessage(`Added ${newName}`)
+        .catch(error => {
+          console.log(error.response.data.error)
+          setNotifMessage('')
+          setErrorMessage(`Error${error.response.data.error}`)
+        })
       setNewName('')
       setNewNumber('')
       setErrorMessage('')
