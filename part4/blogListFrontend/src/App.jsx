@@ -52,7 +52,6 @@ const App = () => {
   const [newAuthor, setNewAuthor] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [newURL, setNewURL] = useState('');
-  const [voteCount, setVoteCount] = useState(0);
   const [notifMessage, setNotifMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -68,12 +67,11 @@ const App = () => {
 
   const addBlog = (event) => {
     event.preventDefault()
-    
     const blogObject = {
       author: newAuthor,
       title: newTitle,
       url: newURL,
-      likes: voteCount
+      likes: 0
     }
     
     blogService
@@ -106,17 +104,17 @@ const App = () => {
 
   const voteCounter = id => {
     const blog = blogs.find((blog) => blog.id === id)
-    setVoteCount(voteCount + 1)
+
     const blogObject = {
-      likes: voteCount + 1
+      likes: blog.likes + 1
     }
     blogService
     .update(blog.id, blogObject).then(returnedBlog => {
-      setBlogs(blogs.map(person => blog.id !== id ? person : returnedBlog))
+      setBlogs(blogs.map(blog => blog.id !== id ? blog : returnedBlog))
       setNewAuthor('')
       setNewTitle('')
       setNewURL('')
-      setNotifMessage(`Updated vote count for the ${blog.itle} Title `)
+      setNotifMessage(`Updated vote count for the ${blog.title} Title `)
       setErrorMessage('')
     })
     .catch(error => {
