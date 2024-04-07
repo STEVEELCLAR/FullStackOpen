@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const User = require('../models/user')
 
 const usersInDb = async () => {
