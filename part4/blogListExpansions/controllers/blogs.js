@@ -33,14 +33,13 @@ blogsRouter.get('/:id', (request, response, next) => {
 
 blogsRouter.post('/', async (request, response, next) => {
   const body = request.body
+  const user = request.user
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
-  // const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
-  const user = await User.findById(decodedToken.id)
-  // const user = await User.findById(body.userId)
+  // const user = await User.findById(decodedToken.id)
   if (!body.title || !body.url){
     return response.status(400).json({error:"Title or URL is missing"})
   }
@@ -63,6 +62,7 @@ blogsRouter.post('/', async (request, response, next) => {
 })
 
 blogsRouter.delete('/:id', async (request, response, next) => {
+  const user = request.user
   try {
     const decodedToken = jwt.verify(request.token, process.env.SECRET)
 
@@ -76,7 +76,6 @@ blogsRouter.delete('/:id', async (request, response, next) => {
       return response.status(404).json({ error: 'Blog not found' })
     }
 
-    // Check if the user deleting the blog is the creator of the blog
     if (blog.user.toString() !== decodedToken.id) {
       return response.status(403).json({ error: 'Unauthorized to delete this blog' })
     }
